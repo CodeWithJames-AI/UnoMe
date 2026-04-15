@@ -1,96 +1,62 @@
 # UnoMe — "You Know Me"
 
-*A platform that truly knows you well. A unified platform that houses the most powerful AI agent tools to unlock your productivity.*
+*Unified AI platform. BuildingAI + OpenWork. Two self-contained services, one seamless UI.*
 
-UnoMe integrates OpenWork into BuildingAI as a unified AI platform. Two self-contained services connected via a thin adapter layer. Users see one app.
+## Context Directory
+
+Read these files only when the condition matches:
+
+- IF starting a new task → read `docs/BLUEPRINT.md` for phase plan and architecture
+- IF coding backend → read `docs/BLUEPRINT.md#api-contract` for endpoint specs
+- IF coding frontend → read `docs/BLUEPRINT.md#production-topology` and use z.ai MCP for OpenWork component patterns
+- IF writing tests → read `docs/BLUEPRINT.md#acceptance-criteria` for the current phase
+- IF integrating UI → query OpenWork via z.ai MCP surgically, do NOT load OpenWork code into workspace
+- IF tests fail → re-read the relevant source files before fixing, never guess
+- IF scope changes → update `docs/PRD.md`, `docs/BLUEPRINT.md`, and this file, commit together
+- IF context feels bloated → stop, consolidate rules, remove contradictions before continuing
+- IF unsure about a decision → read `docs/BLUEPRINT.md#rejected-alternatives` for context on why
+
+## Rules
+
+- Every PR must pass: `pnpm lint && pnpm typecheck && pnpm test && pnpm build`
+- No CI bypass (`--no-verify`) unless explicitly approved
+- TypeScript strict — no `any` without justification
+- Neutral prompts: don't bias toward an outcome (e.g. "review this code" not "find bugs in this code")
+- Separate research from implementation: research first with fresh context, then implement with fresh context
+- Tests are the completion milestone: unless tests pass, task is NOT complete. Do NOT edit tests to pass them.
+- For UI work: screenshot + verify design/behavior before claiming complete
 
 ## Architecture
 
-- **BuildingAI** (host): NestJS 11 + TypeORM + PostgreSQL 17 + Redis + Vue 3 frontend + Tauri desktop
-- **OpenWork** (orchestrator): OpenCode SDK + Express + session/skill/permission management
-- **Adapter**: One NestJS proxy module (`packages/api/src/modules/workflow-proxy/`) + Vue components
-- Both services self-contained, own their state, update independently via Docker images
-
-## Development Rules
-
-### Quality Gates
-- Every PR must pass: `pnpm lint && pnpm typecheck && pnpm test && pnpm build`
-- No CI bypass (`--no-verify`) unless explicitly approved
-- TypeScript strict mode — no `any` without justification
-
-### Regression Prevention
-- Backend: Jest + supertest integration tests
-- Frontend: Playwright + Chrome DevTools MCP for interactive testing
-- All new features must include regression tests for existing features
-- If a new feature breaks an old one, fix the regression before merging
-
-### Context Bloat Prevention
-- CLAUDE.md: < 200 lines (this file)
-- AGENTS.md: < 300 lines
-- Adapter module: < 20 files
-- New Vue components: < 15 files total
-- No package > 50 source files
-- No duplicate abstractions, no redundant markdown files
-- Use z.ai MCP to query OpenWork codebase surgically — don't load OpenWork code into workspace
-
-### Git Practices
-- Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`
-- Issue ticket for every phase/task
-- PR for every phase with template
-- Annotated tags for every checkpoint: `git tag -a unome/phase<N> -m "description"`
-
-### Documentation
-- After every ralph/autopilot cycle, update PRD.md, BLUEPRINT.md, and CLAUDE.md if scope changed
-- All docs are version-tracked in git — always commit doc changes with the code they describe
-
-### Checkpoints and Rollback
-- Each phase produces annotated git tag with: build hash, test results, lockfile, .env template
-- Checkpoints must recreate full app behavior — no weak revert-only checkpoints
-- Rollback: `docker-compose down && git checkout <tag> && docker-compose up -d && smoke test`
-
-### Repository Hygiene
-- No orphan files, no dead code, no unused dependencies
-- Keep instructions minimal — agents should read code, not docs
-- Don't create helper utilities for one-time operations
-- Don't add features, refactor code, or make improvements beyond what was asked
+- **BuildingAI** (host): NestJS 11 + TypeORM + PostgreSQL 17 + Redis + Vue 3 + Tauri
+- **OpenWork v0.11.207** (orchestrator): OpenCode SDK + Express + sessions/skills/permissions
+- **Adapter**: one NestJS proxy module + Vue components in BuildingAI's vertical nav bar
+- Both self-contained, own their state, update independently
+- OpenWork features in nav bar: workflows, skills, messaging, permissions
 
 ## Key Commands
 
-```bash
-pnpm install --frozen-lockfile    # Install dependencies
-pnpm lint                         # Lint all packages
-pnpm typecheck                    # TypeScript type checking
-pnpm --filter @buildingai/api test  # Run backend tests
-pnpm build                        # Build all packages
-docker-compose up -d              # Start all services
-docker-compose down               # Stop all services
 ```
-
-## Integration Points
-
-- BuildingAI API proxies `/api/workflow/*` to OpenWork orchestrator (internal Docker network)
-- Auth: shared JWT_SECRET, BuildingAI exchanges JWT for OpenWork session token server-side
-- No JWT in URLs or query parameters
-- OpenWork features in BuildingAI vertical nav bar: workflows, skills, messaging, permissions
-
-## Warnings
-
-- BuildingAI has NO CI/CD pipeline — must be created (Phase 0)
-- Lint/TypeScript/Prettier configured but not enforced by CI
-- Jest configured in API package only — frontend tests need Playwright setup
+pnpm install --frozen-lockfile       pnpm lint
+pnpm typecheck                       pnpm --filter @buildingai/api test
+pnpm build                           docker-compose up -d
+```
 
 ## Environment
 
-- Node 24.14.1, pnpm 10.20.0, bun 1.3.12, npm 11.11.0
-- Docker 29.4.0, Docker Compose 5.1.3 (standalone: use `docker-compose`)
-- GitHub CLI (gh) authenticated as CodeWithJames-AI
+- Node 24, pnpm 10.20, bun 1.3, Docker 29.4, Docker Compose 5.1.3
+- Use `docker-compose` (not `docker compose`)
+- gh CLI authenticated as CodeWithJames-AI
 - DevContainer: `.devcontainer/devcontainer.json`
-- Note: use `docker-compose` not `docker compose` (standalone install)
+
+## Limits
+
+- CLAUDE.md < 150 lines | AGENTS.md < 300 | Adapter < 20 files | New Vue < 15 files
+- No package > 50 source files | No duplicate abstractions | No redundant markdown
 
 ## Reference
 
-- UnoMe repo: https://github.com/CodeWithJames-AI/UnoMe
-- PRD: `docs/PRD.md`
-- Blueprint: `docs/BLUEPRINT.md`
-- BuildingAI repo: https://github.com/BidingCC/BuildingAI
-- OpenWork repo: https://github.com/different-ai/openwork
+- Repo: https://github.com/CodeWithJames-AI/UnoMe
+- PRD: `docs/PRD.md` | Blueprint: `docs/BLUEPRINT.md`
+- BuildingAI: https://github.com/BidingCC/BuildingAI
+- OpenWork: https://github.com/different-ai/openwork
