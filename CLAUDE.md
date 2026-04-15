@@ -39,10 +39,14 @@ UnoMe integrates OpenWork into BuildingAI as a unified AI platform. Two self-con
 - PR for every phase with template
 - Annotated tags for every checkpoint: `git tag -a unome/phase<N> -m "description"`
 
+### Documentation
+- After every ralph/autopilot cycle, update PRD.md, BLUEPRINT.md, and CLAUDE.md if scope changed
+- All docs are version-tracked in git — always commit doc changes with the code they describe
+
 ### Checkpoints and Rollback
 - Each phase produces annotated git tag with: build hash, test results, lockfile, .env template
 - Checkpoints must recreate full app behavior — no weak revert-only checkpoints
-- Rollback: `docker compose down && git checkout <tag> && docker compose up -d && smoke test`
+- Rollback: `docker-compose down && git checkout <tag> && docker-compose up -d && smoke test`
 
 ### Repository Hygiene
 - No orphan files, no dead code, no unused dependencies
@@ -58,8 +62,8 @@ pnpm lint                         # Lint all packages
 pnpm typecheck                    # TypeScript type checking
 pnpm --filter @buildingai/api test  # Run backend tests
 pnpm build                        # Build all packages
-docker compose up -d              # Start all services
-docker compose down               # Stop all services
+docker-compose up -d              # Start all services
+docker-compose down               # Stop all services
 ```
 
 ## Integration Points
@@ -75,8 +79,17 @@ docker compose down               # Stop all services
 - Lint/TypeScript/Prettier configured but not enforced by CI
 - Jest configured in API package only — frontend tests need Playwright setup
 
+## Environment
+
+- Node 24.14.1, pnpm 10.20.0, bun 1.3.12, npm 11.11.0
+- Docker 29.4.0, Docker Compose 5.1.3 (standalone: use `docker-compose`)
+- GitHub CLI (gh) authenticated as CodeWithJames-AI
+- DevContainer: `.devcontainer/devcontainer.json`
+- Note: use `docker-compose` not `docker compose` (standalone install)
+
 ## Reference
 
+- UnoMe repo: https://github.com/CodeWithJames-AI/UnoMe
 - PRD: `docs/PRD.md`
 - Blueprint: `docs/BLUEPRINT.md`
 - BuildingAI repo: https://github.com/BidingCC/BuildingAI

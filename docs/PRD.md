@@ -144,7 +144,7 @@ Two self-contained services connected via a thin adapter layer:
 
 - Every phase produces an annotated git tag with: build hash, test results, lockfile, .env template
 - Checkpoints must include all runtime state for full recreation
-- Rollback procedure: `docker compose down, git checkout <tag>, docker compose up -d, smoke test`
+- Rollback procedure: `docker-compose down, git checkout <tag>, docker-compose up -d, smoke test`
 
 ### 6.5 Context Bloat Prevention
 

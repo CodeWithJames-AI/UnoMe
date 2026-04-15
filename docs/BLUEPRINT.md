@@ -65,12 +65,12 @@ services:
   unome-api:       # BuildingAI NestJS backend (port 4090)
   unome-web:       # Vue 3 frontend (served via NestJS serve-static)
   openwork:        # OpenWork orchestrator + server (internal only)
-  devcontainer:    # Development environment (optional)
 ```
 
 - OpenWork service is **not exposed to host** — only `unome-api` communicates with it via internal Docker network
 - Health check: `curl -f http://openwork:4091/health`
 - Restart policy: `on-failure:3`
+- **Note**: Use `docker-compose` (standalone) not `docker compose` (plugin)
 
 ---
 
@@ -255,23 +255,25 @@ autocannon -c 100 -d 10 http://localhost:4090/consoleapi/health
 
 ### DevContainer Setup
 
-```json
-{
-  "name": "UnoMe Dev",
-  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.dev.yml"],
-  "service": "devcontainer",
-  "features": {
-    "ghcr.io/devcontainers/features/node:1": { "version": "22.20" },
-    "ghcr.io/devcontainers/features/rust:1": {}
-  },
-  "postCreateCommand": "pnpm install --frozen-lockfile",
-  "customizations": {
-    "vscode": {
-      "extensions": ["vue.volar", "dbaeumer.vscode-eslint"]
-    }
-  }
-}
-```
+Configured at `.devcontainer/devcontainer.json`:
+- Base image: `mcr.microsoft.com/devcontainers/typescript-node:22`
+- Rust toolchain (for Tauri desktop builds)
+- Forwarded ports: 4090 (API), 4091 (OpenWork), 5432 (PostgreSQL), 6379 (Redis)
+- VS Code extensions: Volar, ESLint, Prettier, Tailwind CSS, Playwright
+- Post-create: installs pnpm and bun, runs `pnpm install`
+
+### Environment
+
+| Tool | Version |
+|------|---------|
+| Node.js | 24.14.1 |
+| pnpm | 10.20.0 |
+| bun | 1.3.12 |
+| Docker | 29.4.0 |
+| Docker Compose | 5.1.3 (standalone: `docker-compose`) |
+| GitHub CLI | 2.89.0 |
+
+**UnoMe repo**: https://github.com/CodeWithJames-AI/UnoMe
 
 ### z.ai MCP Usage
 
@@ -312,13 +314,13 @@ Every phase produces a verified checkpoint that includes:
 **Rollback procedure (per phase):**
 ```bash
 # 1. Stop all services
-docker compose down
+docker-compose down
 
 # 2. Revert to previous checkpoint
 git checkout unome/phase<N-1>
 
 # 3. Restart services
-docker compose up -d
+docker-compose up -d
 
 # 4. Wait for startup
 sleep 30
