@@ -1,0 +1,21 @@
+{
+  "name": "UnoMe Dev",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+  "features": {
+    "ghcr.io/devcontainers/features/rust:1": {}
+  },
+  "forwardPorts": [4090, 4091, 5432, 6379],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vue.volar",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-playwright.playwright"
+      ]
+    }
+  },
+  "postCreateCommand": "npm install -g pnpm@10.20.0 bun && pnpm install --frozen-lockfile || true",
+  "remoteUser": "node"
+}

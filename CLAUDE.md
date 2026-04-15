@@ -1,4 +1,6 @@
-# UnoMe — Project Instructions
+# UnoMe — "You Know Me"
+
+*A platform that truly knows you well. A unified platform that houses the most powerful AI agent tools to unlock your productivity.*
 
 UnoMe integrates OpenWork into BuildingAI as a unified AI platform. Two self-contained services connected via a thin adapter layer. Users see one app.
 
