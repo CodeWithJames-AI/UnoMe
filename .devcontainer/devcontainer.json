@@ -5,6 +5,10 @@
     "ghcr.io/devcontainers/features/rust:1": {}
   },
   "forwardPorts": [4090, 4091, 5432, 6379],
+  "mounts": [
+    "source=unome-node-modules,type=volume,target=/workspaces/UnoMe/buildingai/node_modules",
+    "source=unome-ow-node-modules,type=volume,target=/workspaces/UnoMe/openwork/node_modules"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
@@ -16,6 +20,6 @@
       ]
     }
   },
-  "postCreateCommand": "npm install -g pnpm@10.20.0 bun && pnpm install --frozen-lockfile || true",
+  "postCreateCommand": "npm install -g pnpm@10.20.0 @devcontainers/cli && pnpm install --frozen-lockfile || true",
   "remoteUser": "node"
 }

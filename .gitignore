@@ -10,3 +10,6 @@ build/
 .output/
 .omc/
 .claude/
+buildingai/node_modules/
+openwork/node_modules/
+docs/screenshots/
