@@ -1,0 +1,14 @@
+node_modules
+.git
+.omc
+.claude
+dist
+.turbo
+coverage
+build
+.output
+.env
+.env.local
+*.log
+.DS_Store
+docs/screenshots

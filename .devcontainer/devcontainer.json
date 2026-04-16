@@ -1,14 +1,11 @@
 {
   "name": "UnoMe Dev",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
-  "features": {
-    "ghcr.io/devcontainers/features/rust:1": {}
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
   },
+  "mounts": [],
   "forwardPorts": [4090, 4091, 5432, 6379],
-  "mounts": [
-    "source=unome-node-modules,type=volume,target=/workspaces/UnoMe/buildingai/node_modules",
-    "source=unome-ow-node-modules,type=volume,target=/workspaces/UnoMe/openwork/node_modules"
-  ],
   "customizations": {
     "vscode": {
       "extensions": [
@@ -20,6 +17,6 @@
       ]
     }
   },
-  "postCreateCommand": "npm install -g pnpm@10.20.0 @devcontainers/cli && pnpm install --frozen-lockfile || true",
-  "remoteUser": "node"
+  "remoteUser": "root",
+  "postStartCommand": "git config --global --add safe.directory /workspaces/UnoMe || true"
 }
