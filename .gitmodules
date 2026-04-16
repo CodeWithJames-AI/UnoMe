@@ -1,0 +1,6 @@
+[submodule "buildingai"]
+	path = buildingai
+	url = https://github.com/CodeWithJames-AI/buildingai.git
+[submodule "openwork"]
+	path = openwork
+	url = https://github.com/different-ai/openwork.git
